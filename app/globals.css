@@ -1,26 +1,70 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.App {
+  font-family: sans-serif;
+  text-align: center;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.cookie {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.cookie img {
+  transition: transform 0.1s;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.cookie img:active {
+  transform: scale(1.1);
 }
+
+.golden-cookie {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: radial-gradient(circle at 30% 30%, #ffe78a, #f2bb00 60%);
+  color: #2b2300;
+  border: 2px solid #c68f00;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  font-size: 18px;
+}
+
+.golden-cookie.big {
+  width: 84px;
+  height: 84px;
+  font-size: 22px;
+}
+
+.upgrade {
+  margin-left: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg,#fff,#eee);
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.06s ease, box-shadow 0.06s ease, opacity 0.12s ease;
+}
+
+.upgrade:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.upgrade:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+.cookie.upgrade {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 0;
+}
+
