@@ -1,65 +1,181 @@
-import Image from "next/image";
+"use client"
+import { useState, useEffect } from "react";
 
-export default function Home() {
+function Header() {
+  return <h1 className="header">Cookie Clicker</h1>;
+}
+
+function Stats({ cookies, cursors, grandmas }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="stats">
+      <p>Cookies: {Math.floor(cookies)}</p>
+      <p>Cursors: {cursors}</p>
+      <p>Grandmas: {grandmas}</p>
+    </div>
+  );
+}
+
+
+function GameManager() {
+  const [cookies, setCookies] = useState(0);
+  const [cookieRate, setCookieRate] = useState(0);
+
+  const [cursors, setCursors] = useState(0);
+  const [grandmas, setGrandmas] = useState(0);
+
+  const [cursorCost, setCursorCost] = useState(10);
+  const [grandmaCost, setGrandmaCost] = useState(50);
+
+  const [cursorUpgNum, setCursorUpgNum] = useState(0);
+  const [cursorUpgCost, setCursorUpgCost] = useState(500);
+
+  const [cookiePerSecondUpg, setcookiePerSecondUpg] = useState(0);
+  const [cpsCost, setcpsCost] = useState(1000);
+
+  const [showCursorUpg, setShowCursorUpg] = useState(false);
+
+  // Golden cookie state: appears when cookies reach threshold
+  const [showGoldenCookie, setShowGoldenCookie] = useState(false);
+  const [goldenCookies, setGoldenCookies] = useState(0);
+  // 2x production upgrade state
+  const [cpsProd2xUpg, setCpsProd2xUpg] = useState(0);
+  const [cpsProd2xCost, setCpsProd2xCost] = useState(1000);
+
+  const [randomButtonClicked, setRandomButtonClicked] = useState(false);
+  const[randomButtontimesClicked, setRandomButtonTimesClicked] = useState(0);
+
+  // Add cookies automatically each second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCookies((prev) => prev + cookieRate);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cookieRate]);
+
+  // Show golden cookie when cookies reach threshold (10000)
+  useEffect(() => {
+    if (cookies >= 10000) {
+      setShowGoldenCookie(true);
+    } else {
+      setShowGoldenCookie(false);
+    }
+  }, [cookies]);
+
+  // Auto-hide golden cookie after 10 seconds when it appears
+  useEffect(() => {
+    if (!showGoldenCookie) return;
+    const timeout = setTimeout(() => {
+      setShowGoldenCookie(false);
+    }, 10000); // 10 seconds
+    return () => clearTimeout(timeout);
+  }, [showGoldenCookie]);
+
+  function handleCookieClick() {
+    setCookies((prev) => prev + 1);
+  }
+
+  function buyCursor() {
+    if (cookies >= cursorCost) {
+      setCookies((prev) => prev - cursorCost);
+      setCursors((prev) => prev + 1);
+      setCookieRate((prev) => prev + 1);
+      setCursorCost((prev) => Math.floor(prev * 1.2));
+    }
+  }
+
+  function buyGrandma() {
+    if (cookies >= grandmaCost) {
+      setCookies((prev) => prev - grandmaCost);
+      setGrandmas((prev) => prev + 1);
+      setCookieRate((prev) => prev + 5);
+      setGrandmaCost((prev) => Math.floor(prev * 1.25));
+    }
+  }
+  function buySpecialCursorUpgrade() {
+    if (cursors >= 5 && cookies >= cursorUpgCost && cursorUpgNum < 1) {
+      setCookies((prev) => prev - cursorUpgCost);
+      setCursorUpgNum((prev) => prev + 1);
+      setCookieRate((prev) => prev + 3);
+    }
+  }
+
+  function buySpecialCookieUpgrade() {
+    if (cookies >= cpsProd2xCost && cpsProd2xUpg < 1) {
+      setCookies((prev) => prev - cpsProd2xCost);
+      setCpsProd2xUpg(1);
+      setCookieRate((prev) => prev * 2);
+    }
+  }
+
+  function clickGoldenCookie() {
+    setCookies((prev) => prev + 777);
+    setGoldenCookies((prev) => prev + 1);
+    setShowGoldenCookie(false);
+  }
+  
+
+  return (
+    <div>
+      <button className="cookie upgrade" onClick={handleCookieClick}>
+        <img src="/cookie.png" alt="cookie" width="150" />
+      </button>
+
+
+      <div>
+        <button onClick={buyCursor} disabled={cookies < cursorCost} className="upgrade">
+          Buy Cursor (Cost: {cursorCost})
+        </button>
+        <button onClick={buyGrandma} disabled={cookies < grandmaCost} className="upgrade">
+          Buy Grandma (Cost: {grandmaCost})
+        </button>
+        {cursors >= 5 && cursorUpgNum < 1 && (
+          <button
+            onClick={buySpecialCursorUpgrade}
+            disabled={cookies < cursorUpgCost}
+            className="upgrade"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Buy CursorUpgrade (Cost: {cursorUpgCost})
+          </button>
+        )}
+        {cookies >= 200 && cpsProd2xUpg < 1 && (
+          <button
+            onClick={buySpecialCookieUpgrade}
+            disabled={cookies < cpsProd2xCost}
+            className="upgrade"
           >
-            Documentation
-          </a>
-        </div>
-      </main>
+            Buy 2x Production Upgrade (Cost: {cpsProd2xCost})
+          </button>
+        )}
+        {cookies >= 10000 && !showGoldenCookie && (
+          <button
+            onClick={() => setShowGoldenCookie(true)}
+            className="golden-cookie upgrade">
+            Golden Cookie Appears!
+          </button>
+        )}
+        {showGoldenCookie && (
+          <button
+            onClick={clickGoldenCookie}
+            className="golden-cookie big upgrade"
+          >
+            🍪 Click Me! +777 Cookies
+          </button>
+        )}
+      </div>
+      <Stats
+        cookies={cookies}
+        cursors={cursors}
+        grandmas={grandmas}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <div className="App">
+      <Header />
+      <GameManager />
     </div>
   );
 }
