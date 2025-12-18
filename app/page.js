@@ -117,7 +117,7 @@ function GameManager() {
   return (
     <div>
       <button className="cookie upgrade" onClick={handleCookieClick}>
-        <img src="/cookie.png" alt="cookie" width="150" />
+        <img src="public/cookie.png" alt="cookie" width="150" />
       </button>
 
 
