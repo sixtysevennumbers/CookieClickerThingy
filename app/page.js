@@ -37,6 +37,8 @@ function GameManager() {
   // Golden cookie state: appears when cookies reach threshold
   const [showGoldenCookie, setShowGoldenCookie] = useState(false);
   const [goldenCookies, setGoldenCookies] = useState(0);
+  // Prevent golden cookie from immediately reappearing after being clicked
+  const [goldenCookieClicked, setGoldenCookieClicked] = useState(false);
   // 2x production upgrade state
   const [cpsProd2xUpg, setCpsProd2xUpg] = useState(0);
   const [cpsProd2xCost, setCpsProd2xCost] = useState(1000);
@@ -54,12 +56,19 @@ function GameManager() {
 
   // Show golden cookie when cookies reach threshold (10000)
   useEffect(() => {
-    if (cookies >= 10000) {
+    if (cookies >= 10000 && !goldenCookieClicked) {
       setShowGoldenCookie(true);
     } else {
       setShowGoldenCookie(false);
     }
-  }, [cookies]);
+  }, [cookies, goldenCookieClicked]);
+
+  // Reset clicked flag when cookies drop below the threshold so it can reappear later
+  useEffect(() => {
+    if (cookies < 10000 && goldenCookieClicked) {
+      setGoldenCookieClicked(false);
+    }
+  }, [cookies, goldenCookieClicked]);
 
   // Auto-hide golden cookie after 10 seconds when it appears
   useEffect(() => {
@@ -111,6 +120,7 @@ function GameManager() {
     setCookies((prev) => prev + 777);
     setGoldenCookies((prev) => prev + 1);
     setShowGoldenCookie(false);
+    setGoldenCookieClicked(true);
   }
   
 
